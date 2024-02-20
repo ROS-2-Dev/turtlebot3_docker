@@ -44,5 +44,5 @@ ENV NO_AT_BRIDGE 1
 # # Set up the entrypoint
 WORKDIR /turtlebot3_ws
 COPY ./docker/entrypoint.sh /
-COPY ./docker/bashrc /home/${USERNAME}/.bashrc
+# COPY ./docker/bashrc /home/${USERNAME}/.bashrc
 ENTRYPOINT [ "/entrypoint.sh" ]
