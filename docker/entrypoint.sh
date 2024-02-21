@@ -6,6 +6,9 @@ set -e
 source /opt/ros/iron/setup.bash
 echo 'source "/opt/ros/iron/setup.bash"' >> ~/.bashrc
 
+# fix Gazebo display
+source /usr/share/gazebo/setup.sh
+
 # Source the base workspace, if built
 if [ -f /turtlebot3_ws/install/setup.bash ]
 then

@@ -11,10 +11,14 @@ SHELL ["/bin/bash", "-c"]
 # Install basic apt packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
  git libcanberra-gtk-module libcanberra-gtk3-module fuse3 libfuse2 libqt5svg5-dev \
- python3-pip python3-opencv python3-tk python3-pyqt5.qtwebengine
+ python3-pip python3-opencv python3-tk python3-pyqt5.qtwebengine tmux python3-rosdep2
 
 # Install additional Python modules
 RUN pip3 install matplotlib transforms3d
+
+# Install additional ROS packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ ros-${ROS_DISTRO}-turtlebot3-simulations
 
 # Use Cyclone DDS as middleware
 RUN apt-get update && apt-get install -y --no-install-recommends \
