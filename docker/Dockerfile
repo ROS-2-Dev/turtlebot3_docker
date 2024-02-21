@@ -18,7 +18,9 @@ RUN pip3 install matplotlib transforms3d
 
 # Install additional ROS packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
- ros-${ROS_DISTRO}-turtlebot3-simulations
+ ros-${ROS_DISTRO}-turtlebot3-simulations \
+ ros-${ROS_DISTRO}-navigation2 \
+ ros-${ROS_DISTRO}-nav2-bringup
 
 # Use Cyclone DDS as middleware
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -48,5 +50,4 @@ ENV NO_AT_BRIDGE 1
 # # Set up the entrypoint
 WORKDIR /turtlebot3_ws
 COPY ./docker/entrypoint.sh /
-# COPY ./docker/bashrc /home/${USERNAME}/.bashrc
 ENTRYPOINT [ "/entrypoint.sh" ]

@@ -29,7 +29,6 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
 
-  # tb3 world
-  tb3_world:
+  tb3_nav:
     extends: base
-    command: ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    command: ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
