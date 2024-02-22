@@ -16,7 +16,7 @@ services:
     network_mode: host
     ipc: host
     # Needed to display graphical applications
-    privileged: true
+    privileged: True
     environment:
       # Needed to define a TurtleBot3 model type
       - TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-waffle_pi}
@@ -29,6 +29,38 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
 
+  # Overlay image containing the example source code.
+  overlay:
+    extends: base
+    image: turtlebot3:overlay
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: overlay
+
+  # Developer container
+  dev:
+    extends: overlay
+    image: turtlebot3:dev
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev
+      args:
+        - UID=${UID:-1000}
+        - GID=${UID:-1000}
+        - USERNAME=${USERNAME:-devuser}
+    volumes:
+      # Mount the source code
+      - ./tb3_autonomy:/overlay_ws/src/tb3_autonomy:rw
+      # Mount colcon build artifacts for faster rebuilds
+      - ./.colcon/build/:/overlay_ws/build/:rw
+      - ./.colcon/install/:/overlay_ws/install/:rw
+      - ./.colcon/log/:/overlay_ws/log/:rw
+    user: ${USERNAME:-devuser}
+    command: sleep infinity
+
   tb3_nav:
     extends: base
     command: ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
+    

@@ -21,7 +21,6 @@ fi
 if [ -f /overlay_ws/install/setup.bash ]
 then
   source /overlay_ws/install/setup.bash
-  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix tb3_worlds)/share/tb3_worlds/models
   echo "Sourced autonomy overlay workspace"
 fi
 
