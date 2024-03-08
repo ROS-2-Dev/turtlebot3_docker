@@ -9,7 +9,7 @@
 ## usage
 
     docker compose up tb3_nav
-will run the turtlebot3 simulation with navigation stack.
+will run the turtlebot3 simulation with navigation stack and rosweb-bridge @http://localhost:9090/
 
 ## development in docker container
     docker compose up dev
