@@ -21,8 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  ros-${ROS_DISTRO}-turtlebot3-simulations \
  ros-${ROS_DISTRO}-navigation2 \
  ros-${ROS_DISTRO}-nav2-bringup \
- ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
- ros-${ROS_DISTRO}-rosbridge-server
+ ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
