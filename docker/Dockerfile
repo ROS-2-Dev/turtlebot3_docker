@@ -20,11 +20,9 @@ RUN pip3 install matplotlib transforms3d
 RUN apt-get update && apt-get install -y --no-install-recommends \
  ros-${ROS_DISTRO}-turtlebot3-simulations \
  ros-${ROS_DISTRO}-navigation2 \
- ros-${ROS_DISTRO}-nav2-bringup
-
-# Use Cyclone DDS as middleware
-RUN apt-get update && apt-get install -y --no-install-recommends \
+ ros-${ROS_DISTRO}-nav2-bringup \
  ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
+
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 # Create Colcon workspace with external dependencies
@@ -67,6 +65,7 @@ FROM base as overlay
 RUN mkdir -p /overlay_ws/src
 WORKDIR /overlay_ws
 COPY ./tb3_autonomy/ ./src/tb3_autonomy/
+COPY ./tb3_rosbridge/ ./src/tb3_rosbridge/
 RUN source /turtlebot3_ws/install/setup.bash \
  && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
  && colcon build --symlink-install

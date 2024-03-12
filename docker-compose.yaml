@@ -15,6 +15,8 @@ services:
     # Networking and IPC for ROS 2
     network_mode: host
     ipc: host
+    ports: 
+      - "127.0.0.1:9090:9090"
     # Needed to display graphical applications
     privileged: True
     environment:
@@ -53,6 +55,7 @@ services:
     volumes:
       # Mount the source code
       - ./tb3_autonomy:/overlay_ws/src/tb3_autonomy:rw
+      - ./tb3_rosbridge:/overlay_ws/src/tb3_rosbridge:rw
       # Mount colcon build artifacts for faster rebuilds
       - ./.colcon/build/:/overlay_ws/build/:rw
       - ./.colcon/install/:/overlay_ws/install/:rw
@@ -61,6 +64,6 @@ services:
     command: sleep infinity
 
   tb3_nav:
-    extends: base
-    command: ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
+    extends: overlay
+    command: ros2 launch tb3_rosbridge tb3_nav2_web_launch.py
     
