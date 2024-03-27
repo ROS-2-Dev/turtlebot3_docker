@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   # Base image containing dependencies.
   base:
@@ -15,7 +14,7 @@ services:
     # Networking and IPC for ROS 2
     network_mode: host
     ipc: host
-    ports: 
+    ports:
       - "127.0.0.1:9090:9090"
     # Needed to display graphical applications
     privileged: True
@@ -66,4 +65,3 @@ services:
   tb3_nav:
     extends: overlay
     command: ros2 launch tb3_rosbridge tb3_nav2_web_launch.py
-    

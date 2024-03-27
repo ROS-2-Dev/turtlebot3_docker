@@ -40,7 +40,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
 ENV TURTLEBOT3_MODEL=waffle_pi
 
 # Download Groot2 AppImage and place it in the home folder.
-WORKDIR /root/
+WORKDIR /root
 RUN curl -o Groot2.AppImage https://s3.us-west-1.amazonaws.com/download.behaviortree.dev/groot2_linux_installer/Groot2-v1.0.1-x86_64.AppImage \
  && chmod a+x Groot2.AppImage
 
@@ -70,6 +70,23 @@ RUN source /turtlebot3_ws/install/setup.bash \
  && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
  && colcon build --symlink-install
 
+RUN source /turtlebot3_ws/install/setup.bash \
+ && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
+ && colcon build --symlink-install
+
+# Build ROS2 robot web tools related packages
+RUN sed -i 's/from io import StringIO/from io import BytesIO, StringIO/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
+    sed -i 's/i = Image.frombytes("RGB", (int(width), int(height)), string)/i = Image.frombytes("RGB", (int(width), int(height)), string.encode())/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
+    sed -i 's/buff = StringIO()/buff = BytesIO()/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
+    sed -i 's/encoded = standard_b64encode(buff.getvalue())/encoded = standard_b64encode(buff.getvalue()).decode()/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
+    source /turtlebot3_ws/install/setup.bash && \
+    git clone https://github.com/Wisc-HCI/tf2_web_republisher_py.git src/tf2_web_republisher_py && \
+    sed -i 's/script-dir/script_dir/g' src/tf2_web_republisher_py/tf2_web_republisher_py/setup.cfg && \
+    sed -i 's/install-scripts/install_scripts/g' src/tf2_web_republisher_py/tf2_web_republisher_py/setup.cfg && \
+    colcon build --symlink-install && \
+    pip install pyquaternion==0.9.9 && \
+    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Set up the entrypoint
 COPY ./docker/entrypoint.sh /
 ENTRYPOINT [ "/entrypoint.sh" ]
@@ -79,16 +96,16 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 # Development Image #
 #####################
 FROM overlay as dev
- 
+
 # Dev container arguments
 ARG USERNAME=devuser
 ARG UID=1000
 ARG GID=${UID}
- 
+
 # Install extra tools for development
 RUN apt-get update && apt-get install -y --no-install-recommends \
  gdb gdbserver vim tmux
- 
+
 # Create new user and home directory
 RUN groupadd --gid $GID $USERNAME \
  && useradd --uid ${GID} --gid ${UID} --create-home ${USERNAME} \
@@ -103,7 +120,7 @@ RUN chown -R ${UID}:${GID} /overlay_ws/
 # Move Groot2 to new user's home directory and ensure it can be run
 RUN groupadd fuse \
  && usermod -aG fuse ${USERNAME}
-RUN mv /root/Groot2.AppImage /home/${USERNAME} \ 
+RUN mv /root/Groot2.AppImage /home/${USERNAME} \
  && chown ${UID}:${GID} /home/${USERNAME}/Groot2.AppImage
 
 # Set the user and source entrypoint in the user's .bashrc file

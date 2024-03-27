@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from ament_index_python.packages import get_package_share_path
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -10,4 +11,11 @@ def generate_launch_description():
 
         IncludeLaunchDescription(str(get_package_share_path('rosbridge_server')/ 'launch'/ 'rosbridge_websocket_launch.xml'),
                                 launch_arguments={'port': '9090'}.items()),
+
+        Node(
+            package='tf2_web_republisher_py',
+            executable='tf2_web_republisher',
+            parameters=[],
+            output='screen',
+        ),
     ])
