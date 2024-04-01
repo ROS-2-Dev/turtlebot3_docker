@@ -10,12 +10,5 @@ def generate_launch_description():
                                 launch_arguments={'headless': 'False'}.items()),
 
         IncludeLaunchDescription(str(get_package_share_path('rosbridge_server')/ 'launch'/ 'rosbridge_websocket_launch.xml'),
-                                launch_arguments={'port': '9090'}.items()),
-
-        Node(
-            package='tf2_web_republisher_py',
-            executable='tf2_web_republisher',
-            parameters=[],
-            output='screen',
-        ),
+                                launch_arguments={'port': '9090', 'send_action_goals_in_new_thread': 'True'}.items()),
     ])

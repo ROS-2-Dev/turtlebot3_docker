@@ -31,6 +31,9 @@ WORKDIR /turtlebot3_ws/src
 COPY dependencies.repos .
 RUN vcs import < dependencies.repos
 
+# Modified rosbridge_suite source code for black map issue
+RUN sed -i 's/encoded = standard_b64encode(buff.getvalue())/encoded = standard_b64encode(buff.getvalue()).decode()/g' rosbridge_suite/rosbridge_library/src/rosbridge_library/internal/pngcompression.py
+
 # Build the base Colcon workspace, installing dependencies first.
 WORKDIR /turtlebot3_ws
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
@@ -70,22 +73,6 @@ RUN source /turtlebot3_ws/install/setup.bash \
  && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
  && colcon build --symlink-install
 
-RUN source /turtlebot3_ws/install/setup.bash \
- && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
- && colcon build --symlink-install
-
-# Build ROS2 robot web tools related packages
-RUN sed -i 's/from io import StringIO/from io import BytesIO, StringIO/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
-    sed -i 's/i = Image.frombytes("RGB", (int(width), int(height)), string)/i = Image.frombytes("RGB", (int(width), int(height)), string.encode())/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
-    sed -i 's/buff = StringIO()/buff = BytesIO()/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
-    sed -i 's/encoded = standard_b64encode(buff.getvalue())/encoded = standard_b64encode(buff.getvalue()).decode()/g' /opt/ros/${ROS_DISTRO}/lib/python3.10/site-packages/rosbridge_library/internal/pngcompression.py && \
-    source /turtlebot3_ws/install/setup.bash && \
-    git clone https://github.com/Wisc-HCI/tf2_web_republisher_py.git src/tf2_web_republisher_py && \
-    sed -i 's/script-dir/script_dir/g' src/tf2_web_republisher_py/tf2_web_republisher_py/setup.cfg && \
-    sed -i 's/install-scripts/install_scripts/g' src/tf2_web_republisher_py/tf2_web_republisher_py/setup.cfg && \
-    colcon build --symlink-install && \
-    pip install pyquaternion==0.9.9 && \
-    apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set up the entrypoint
 COPY ./docker/entrypoint.sh /
