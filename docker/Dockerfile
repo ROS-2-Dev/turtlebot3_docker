@@ -31,6 +31,9 @@ WORKDIR /turtlebot3_ws/src
 COPY dependencies.repos .
 RUN vcs import < dependencies.repos
 
+# Modified rosbridge_suite source code for black map issue
+RUN sed -i 's/encoded = standard_b64encode(buff.getvalue())/encoded = standard_b64encode(buff.getvalue()).decode()/g' rosbridge_suite/rosbridge_library/src/rosbridge_library/internal/pngcompression.py
+
 # Build the base Colcon workspace, installing dependencies first.
 WORKDIR /turtlebot3_ws
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
@@ -40,7 +43,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
 ENV TURTLEBOT3_MODEL=waffle_pi
 
 # Download Groot2 AppImage and place it in the home folder.
-WORKDIR /root/
+WORKDIR /root
 RUN curl -o Groot2.AppImage https://s3.us-west-1.amazonaws.com/download.behaviortree.dev/groot2_linux_installer/Groot2-v1.0.1-x86_64.AppImage \
  && chmod a+x Groot2.AppImage
 
@@ -70,6 +73,7 @@ RUN source /turtlebot3_ws/install/setup.bash \
  && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
  && colcon build --symlink-install
 
+
 # Set up the entrypoint
 COPY ./docker/entrypoint.sh /
 ENTRYPOINT [ "/entrypoint.sh" ]
@@ -79,16 +83,16 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 # Development Image #
 #####################
 FROM overlay as dev
- 
+
 # Dev container arguments
 ARG USERNAME=devuser
 ARG UID=1000
 ARG GID=${UID}
- 
+
 # Install extra tools for development
 RUN apt-get update && apt-get install -y --no-install-recommends \
  gdb gdbserver vim tmux
- 
+
 # Create new user and home directory
 RUN groupadd --gid $GID $USERNAME \
  && useradd --uid ${GID} --gid ${UID} --create-home ${USERNAME} \
@@ -103,7 +107,7 @@ RUN chown -R ${UID}:${GID} /overlay_ws/
 # Move Groot2 to new user's home directory and ensure it can be run
 RUN groupadd fuse \
  && usermod -aG fuse ${USERNAME}
-RUN mv /root/Groot2.AppImage /home/${USERNAME} \ 
+RUN mv /root/Groot2.AppImage /home/${USERNAME} \
  && chown ${UID}:${GID} /home/${USERNAME}/Groot2.AppImage
 
 # Set the user and source entrypoint in the user's .bashrc file
