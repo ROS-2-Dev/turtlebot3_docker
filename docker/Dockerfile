@@ -10,18 +10,18 @@ SHELL ["/bin/bash", "-c"]
 
 # Install basic apt packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
- git libcanberra-gtk-module libcanberra-gtk3-module fuse3 libfuse2 libqt5svg5-dev \
- python3-pip python3-opencv python3-tk python3-pyqt5.qtwebengine
+    git libcanberra-gtk-module libcanberra-gtk3-module fuse3 libfuse2 libqt5svg5-dev \
+    python3-pip python3-opencv python3-tk python3-pyqt5.qtwebengine
 
 # Install additional Python modules
 RUN pip3 install matplotlib transforms3d
 
 # Install additional ROS packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
- ros-${ROS_DISTRO}-turtlebot3-simulations \
- ros-${ROS_DISTRO}-navigation2 \
- ros-${ROS_DISTRO}-nav2-bringup \
- ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
+    ros-${ROS_DISTRO}-turtlebot3-simulations \
+    ros-${ROS_DISTRO}-navigation2 \
+    ros-${ROS_DISTRO}-nav2-bringup \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
@@ -37,15 +37,15 @@ RUN sed -i 's/encoded = standard_b64encode(buff.getvalue())/encoded = standard_b
 # Build the base Colcon workspace, installing dependencies first.
 WORKDIR /turtlebot3_ws
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
- && apt-get update -y \
- && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
- && colcon build --symlink-install
+    && apt-get update -y \
+    && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
+    && colcon build --symlink-install
 ENV TURTLEBOT3_MODEL=waffle_pi
 
 # Download Groot2 AppImage and place it in the home folder.
 WORKDIR /root
 RUN curl -o Groot2.AppImage https://s3.us-west-1.amazonaws.com/download.behaviortree.dev/groot2_linux_installer/Groot2-v1.0.1-x86_64.AppImage \
- && chmod a+x Groot2.AppImage
+    && chmod a+x Groot2.AppImage
 
 # Remove display warnings
 RUN mkdir /tmp/runtime-root
@@ -70,8 +70,8 @@ WORKDIR /overlay_ws
 COPY ./tb3_autonomy/ ./src/tb3_autonomy/
 COPY ./tb3_rosbridge/ ./src/tb3_rosbridge/
 RUN source /turtlebot3_ws/install/setup.bash \
- && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
- && colcon build --symlink-install
+    && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
+    && colcon build --symlink-install
 
 
 # Set up the entrypoint
@@ -91,24 +91,24 @@ ARG GID=${UID}
 
 # Install extra tools for development
 RUN apt-get update && apt-get install -y --no-install-recommends \
- gdb gdbserver vim tmux
+    gdb gdbserver vim tmux
 
 # Create new user and home directory
 RUN groupadd --gid $GID $USERNAME \
- && useradd --uid ${GID} --gid ${UID} --create-home ${USERNAME} \
- && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
- && chmod 0440 /etc/sudoers.d/${USERNAME} \
- && mkdir -p /home/${USERNAME} \
- && chown -R ${UID}:${GID} /home/${USERNAME}
+    && useradd --uid ${GID} --gid ${UID} --create-home ${USERNAME} \
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME} \
+    && mkdir -p /home/${USERNAME} \
+    && chown -R ${UID}:${GID} /home/${USERNAME}
 
 # Set the ownership of the overlay workspace to the new user
 RUN chown -R ${UID}:${GID} /overlay_ws/
 
 # Move Groot2 to new user's home directory and ensure it can be run
 RUN groupadd fuse \
- && usermod -aG fuse ${USERNAME}
+    && usermod -aG fuse ${USERNAME}
 RUN mv /root/Groot2.AppImage /home/${USERNAME} \
- && chown ${UID}:${GID} /home/${USERNAME}/Groot2.AppImage
+    && chown ${UID}:${GID} /home/${USERNAME}/Groot2.AppImage
 
 # Set the user and source entrypoint in the user's .bashrc file
 USER ${USERNAME}

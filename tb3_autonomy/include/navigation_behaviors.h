@@ -45,7 +45,7 @@ class GetLocationFromQueue : public BT::SyncActionNode
     GetLocationFromQueue(const std::string& name, const BT::NodeConfig& config);
     BT::NodeStatus tick() override;
     static BT::PortsList providedPorts();
-  
+
   private:
     std::deque<std::string> location_queue_;
 };
