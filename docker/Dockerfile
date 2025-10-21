@@ -1,5 +1,5 @@
 # ROS distribution to use
-ARG ROS_DISTRO=iron
+ARG ROS_DISTRO=humble
 
 ########################################
 # Base Image for TurtleBot3 Simulation #
@@ -11,7 +11,6 @@ SHELL ["/bin/bash", "-c"]
 # Install basic apt packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git libcanberra-gtk-module libcanberra-gtk3-module fuse3 libfuse2 libqt5svg5-dev 
-    # python3-pip python3-opencv python3-tk python3-pyqt5.qtwebengine
 
 # Install additional ROS packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -94,10 +93,6 @@ RUN groupadd --gid $GID $USERNAME \
 
 # Set the ownership of the overlay workspace to the new user
 RUN chown -R ${UID}:${GID} /overlay_ws/
-
-# Move Groot2 to new user's home directory and ensure it can be run
-# RUN groupadd fuse \
-#     && usermod -aG fuse ${USERNAME}
 
 # Set the user and source entrypoint in the user's .bashrc file
 USER ${USERNAME}
