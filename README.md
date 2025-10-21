@@ -8,7 +8,10 @@ https://github.com/sea-bass/turtlebot3_behavior_demos
 
     git clone git@github.com:ROS-2-Dev/turtlebot3_docker.git
     cd turtlebot3_docker
-    docker compose build
+
+ROS_DISTRO can be set in the command, but does not necessarily work on all distros. Better create/change to specific ROS distro branch.
+    
+    ROS_DISTRO=iron docker compose build
 
 ## usage
 
