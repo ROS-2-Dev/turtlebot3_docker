@@ -1,5 +1,5 @@
 # ROS distribution to use
-ARG ROS_DISTRO=iron
+ARG ROS_DISTRO=humble
 
 ########################################
 # Base Image for TurtleBot3 Simulation #
