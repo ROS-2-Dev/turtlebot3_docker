@@ -35,7 +35,11 @@ WORKDIR /turtlebot3_ws
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
     && apt-get update -y \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
-    && colcon build --symlink-install
+    && colcon build --symlink-install \
+    # Clean up
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
 ENV TURTLEBOT3_MODEL=waffle_pi
 
 # Remove display warnings
@@ -61,7 +65,11 @@ WORKDIR /overlay_ws
 COPY ./tb3_rosbridge/ ./src/tb3_rosbridge/
 RUN source /turtlebot3_ws/install/setup.bash \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
-    && colcon build --symlink-install
+    && colcon build --symlink-install \
+    # Clean up
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
 
 
 # Set up the entrypoint
