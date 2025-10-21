@@ -1,10 +1,10 @@
 # ROS distribution to use
-ARG ROS_DISTRO=humble
+ARG ROS_DISTRO=jazzy
 
 ########################################
 # Base Image for TurtleBot3 Simulation #
 ########################################
-FROM osrf/ros:${ROS_DISTRO}-desktop AS base
+FROM ros:${ROS_DISTRO} AS base
 ENV ROS_DISTRO=${ROS_DISTRO}
 SHELL ["/bin/bash", "-c"]
 
@@ -81,7 +81,17 @@ ARG GID=${UID}
 
 # Install extra tools for development
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gdb gdbserver vim tmux
+    gdb gdbserver vim tmux \
+    # Clean up
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# In Ubuntu 24.04, there is already a user named "ubuntu" with UID 1000.
+# Delete this in the (common) event that the user on the host also has this UID.
+RUN touch /var/mail/ubuntu \
+    && chown ubuntu /var/mail/ubuntu \
+    && userdel -r ubuntu
 
 # Create new user and home directory
 RUN groupadd --gid $GID $USERNAME \
