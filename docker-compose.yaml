@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       args:
-        ROS_DISTRO: ${ROS_DISTRO::-iron}
+        ROS_DISTRO: ${ROS_DISTRO:-iron}
       target: base
     # Interactive shell
     stdin_open: true
