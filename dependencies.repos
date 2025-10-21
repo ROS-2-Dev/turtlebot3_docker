@@ -1,19 +1,5 @@
 repositories:
 
-  # TurtleBot3 Repo
-  # TODO: Remote once this PR is in the binary release:
-  # https://github.com/ROBOTIS-GIT/turtlebot3/pull/916
-  # turtlebot3:
-  #   type: git
-  #   url: https://github.com/ROBOTIS-GIT/turtlebot3.git
-  #   version: ros2
-
-  # BehaviorTree.CPP for C++ based behavior trees.
-  behaviortree_cpp:
-    type: git
-    url: https://github.com/BehaviorTree/BehaviorTree.CPP.git
-    version: master
-
   # RobotWebTools
   rosbridge_suite:
     type: git
