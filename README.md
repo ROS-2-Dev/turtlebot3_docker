@@ -11,7 +11,7 @@ https://github.com/sea-bass/turtlebot3_behavior_demos
 
 ROS_DISTRO can be set in the command, but does not necessarily work on all distros. Better create/change to specific ROS distro branch.
     
-    ROS_DISTRO=iron docker compose build
+    ROS_DISTRO=humble docker compose build
 
 ## usage
 

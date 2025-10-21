@@ -3,8 +3,8 @@
 set -e
 
 # setup ros2 environment
-source /opt/ros/iron/setup.bash
-echo 'source "/opt/ros/iron/setup.bash"' >> ~/.bashrc
+source /opt/ros/humble/setup.bash
+echo 'source "/opt/ros/humble/setup.bash"' >> ~/.bashrc
 
 # fix Gazebo display
 source /usr/share/gazebo/setup.sh
