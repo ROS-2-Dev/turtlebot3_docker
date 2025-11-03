@@ -13,7 +13,8 @@ def generate_launch_description():
                     / "launch"
                     / "tb3_simulation_launch.py"
                 ),
-                launch_arguments={"headless": "False"}.items(),
+                launch_arguments={"headless": "False",
+                                  "slam": "True"}.items(),
             ),
             IncludeLaunchDescription(
                 str(

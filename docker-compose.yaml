@@ -1,3 +1,14 @@
+# Usage:
+#
+# To build the images:
+#   docker compose build
+#
+# To start up a specific service by name:
+#   docker compose up <service_name>
+#
+# To open an interactive shell to a running container:
+#   docker exec -it <container_name> bash
+
 services:
   # Base image containing dependencies.
   base:
@@ -6,7 +17,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       args:
-        ROS_DISTRO: ${ROS_DISTRO:-humble}
+        ROS_DISTRO: ${ROS_DISTRO:-jazzy}
       target: base
     # Interactive shell
     stdin_open: true
@@ -53,7 +64,6 @@ services:
         - USERNAME=${USERNAME:-devuser}
     volumes:
       # Mount the source code
-      - ./tb3_autonomy:/overlay_ws/src/tb3_autonomy:rw
       - ./tb3_rosbridge:/overlay_ws/src/tb3_rosbridge:rw
       # Mount colcon build artifacts for faster rebuilds
       - ./.colcon/build/:/overlay_ws/build/:rw

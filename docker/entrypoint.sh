@@ -1,20 +1,15 @@
 #!/bin/bash
-# Basic entrypoint for ROS / Colcon Docker containers
-set -e
+# Basic entrypoint for ROS Docker containers
 
-# setup ros2 environment
-source /opt/ros/humble/setup.bash
-echo 'source "/opt/ros/humble/setup.bash"' >> ~/.bashrc
-
-# fix Gazebo display
-source /usr/share/gazebo/setup.sh
+# Source ROS 2
+source /opt/ros/${ROS_DISTRO}/setup.bash
+echo "Sourced ROS 2 ${ROS_DISTRO}"
 
 # Source the base workspace, if built
 if [ -f /turtlebot3_ws/install/setup.bash ]
 then
   source /turtlebot3_ws/install/setup.bash
-  export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$(ros2 pkg prefix turtlebot3_gazebo)/share/turtlebot3_gazebo/models
-  echo "Sourced TurtleBot3 base workspace"
+  echo "Sourced TurtleBot base workspace"
 fi
 
 # Source the overlay workspace, if built
