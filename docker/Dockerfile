@@ -12,11 +12,13 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git libcanberra-gtk-module libcanberra-gtk3-module fuse3 libfuse2 libqt5svg5-dev 
 
-# Install additional ROS packages
+# # Install additional ROS packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-${ROS_DISTRO}-turtlebot3-simulations \
     ros-${ROS_DISTRO}-navigation2 \
+    ros-${ROS_DISTRO}-rviz2 \
     ros-${ROS_DISTRO}-nav2-bringup \
+    ros-${ROS_DISTRO}-nav2-route \
+    ros-${ROS_DISTRO}-slam-toolbox \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
